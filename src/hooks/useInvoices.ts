@@ -1,9 +1,48 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { Invoice } from '../types/invoice';
 
+const STORAGE_KEY = 'invoices_data';
+
 export function useInvoices(initialInvoices: Invoice[] = []) {
-  const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'Filter by status' | 'draft' | 'pending' | 'paid'>('Filter by status');
+
+  // Load invoices from LocalStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Convert date strings back to Date objects
+        const invoicesWithDates = parsed.map((inv: any) => ({
+          ...inv,
+          invoiceDate: new Date(inv.invoiceDate),
+          createdAt: inv.createdAt ? new Date(inv.createdAt) : undefined,
+        }));
+        setInvoices(invoicesWithDates);
+      } else if (initialInvoices.length > 0) {
+        setInvoices(initialInvoices);
+      }
+    } catch (error) {
+      console.error('Failed to load invoices from localStorage:', error);
+      if (initialInvoices.length > 0) {
+        setInvoices(initialInvoices);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save invoices to LocalStorage whenever they change
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(invoices));
+      } catch (error) {
+        console.error('Failed to save invoices to localStorage:', error);
+      }
+    }
+  }, [invoices, isLoaded]);
 
   // Filter invoices by status
   const filteredInvoices = useCallback(() => {
@@ -24,17 +63,18 @@ export function useInvoices(initialInvoices: Invoice[] = []) {
 
   // Update existing invoice
   const updateInvoice = useCallback((id: string, updatedInvoice: Invoice) => {
-  let updated: Invoice | null = null;
-  setInvoices(prev => {
-    const newInvoices = prev.map(inv => {
-      if (inv.id === id) {updated = { ...updatedInvoice, id };
-        return updated;
-      }
-      return inv;
+    let result: Invoice | null = null;
+    setInvoices(prev => {
+      const newInvoices = prev.map(inv => {
+        if (inv.id === id) {
+          result = { ...updatedInvoice, id };
+          return result;
+        }
+        return inv;
+      });
+      return newInvoices;
     });
-    return newInvoices;
-  });
-  return updated;
+    return result;
   }, []);
 
   // Delete invoice
@@ -64,5 +104,6 @@ export function useInvoices(initialInvoices: Invoice[] = []) {
     deleteInvoice,
     markAsPaid,
     getInvoiceById,
+    isLoaded,
   };
 }

@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { useAccessibleModal } from "../../hooks/useAccessibleModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,23 +9,36 @@ interface ModalProps {
   showOverlay?: boolean;
 }
 
-function Modal({ isOpen, onClose, title, children, showOverlay = true }: ModalProps) {
+function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  showOverlay = true,
+}: ModalProps) {
+  const { modalRef } = useAccessibleModal(isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
     <>
       {showOverlay && (
-        <div 
+        <div
           className="modal-overlay"
           onClick={onClose}
           role="presentation"
+          aria-hidden="true"
         />
       )}
-      
-      <div className="modal-panel">
-        <div className="modal-panel-content">
-          {children}
-        </div>
+
+      <div
+        className="modal-panel"
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title || "Modal"}
+      >
+        <div className="modal-panel-content">{children}</div>
       </div>
     </>
   );
