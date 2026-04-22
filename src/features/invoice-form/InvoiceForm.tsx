@@ -97,16 +97,6 @@ function InvoiceForm({
         {isEditing ? `Edit #${initialData?.id}` : "New Invoice"}
       </h1>
 
-      {errors.length > 0 && (
-        <div className="form-errors">
-          {errors.map((error, index) => (
-            <p key={index} className="error-message">
-              {error}
-            </p>
-          ))}
-        </div>
-      )}
-
       <section className="form-section">
         <h2 className="section-title">Bill From</h2>
         <AddressForm
@@ -204,9 +194,21 @@ function InvoiceForm({
 
       <section className="form-section">
         <h2 className="section-title">Item List</h2>
+
         <InvoiceItemsList items={items} setItems={setItems} />
+
+        {/* Show these errors ONLY below items */}
+        {errors.some((e) => e.includes("Bill From street")) ||
+        errors.some((e) => e.includes("Bill From city")) ||
+        errors.some((e) => e.includes("Client name")) ||
+        errors.some((e) => e.includes("Client email")) ||
+        errors.some((e) => e.includes("Bill To street")) ||
+        errors.some((e) => e.includes("Bill To city")) ||
+        errors.some((e) => e.includes("Invoice date")) ? (
+          <p className="error-message">-All fields must be added</p>
+        ) : null}
         {errors.some((e) => e.includes("At least one item")) && (
-          <p className="error-message">* All fields must be added</p>
+          <p className="error-message">-An item must be added</p>
         )}
       </section>
 
