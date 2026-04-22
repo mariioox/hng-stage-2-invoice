@@ -1,16 +1,26 @@
 interface ConfirmDeleteModalProps {
-  invoiceId: string;
+  isOpen: boolean;
+  invoiceId?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-function ConfirmDeleteModal({ invoiceId, onConfirm, onCancel }: ConfirmDeleteModalProps) {
+function ConfirmDeleteModal({
+  isOpen,
+  invoiceId,
+  onConfirm,
+  onCancel,
+}: ConfirmDeleteModalProps) {
+  if (!isOpen) return null;
+
   return (
-    <div className="modal-overlay">
+    <>
+      <div className="modal-overlay" onClick={onCancel} role="presentation" />
       <div className="modal-content">
         <h2>Confirm Deletion</h2>
         <p>
-          Are you sure you want to delete invoice <strong>{invoiceId}</strong>? This action cannot be undone.
+          Are you sure you want to delete invoice <strong>{invoiceId}</strong>?
+          This action cannot be undone.
         </p>
         <div className="modal-actions">
           <button className="btn btn-secondary" onClick={onCancel}>
@@ -21,7 +31,7 @@ function ConfirmDeleteModal({ invoiceId, onConfirm, onCancel }: ConfirmDeleteMod
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

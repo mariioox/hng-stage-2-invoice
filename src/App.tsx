@@ -1,104 +1,144 @@
 import { useState } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import Sidebar from "./features/common/Sidebar";
-import type { Invoice } from "./types/invoice";
-import InvoicesList from "./features/invoices/InvoicesList";
+import MainLayout from "./components/Layout/MainLayout";
+import Modal from "./components/Modal/Modal";
 import InvoiceForm from "./features/invoice-form/InvoiceForm";
+import ConfirmDeleteModal from "./features/common/ConfirmDeleteModal";
+import InvoicesList from "./features/invoices/InvoicesList";
 import InvoiceDetail from "./features/invoice-detail/InvoiceDetail";
+import { useInvoices } from "./hooks/useInvoices";
+import { useModal } from "./hooks/useModal";
+import type { Invoice } from "./types/invoice";
 import "./index.css";
-
-type View = "list" | "create" | "edit" | "detail";
+import "./styles/modal.css";
 
 function AppContent() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [currentView, setCurrentView] = useState<View>("list");
+  // State management
+  const invoices = useInvoices();
+  const modal = useModal("list");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-  const [filterStatus, setFilterStatus] = useState<
-    "Filter by status" | "draft" | "pending" | "paid"
-  >("Filter by status");
 
-  const handleCreateInvoice = (invoice: Invoice) => {
-    const newInvoice = {
-      ...invoice,
-      id: `#${Date.now()}`,
-      createdAt: new Date(),
-    };
-    setInvoices([...invoices, newInvoice]);
-    setCurrentView("list");
+  // ============================================
+  // FORM SUBMISSION HANDLERS
+  // ============================================
+
+  const handleCreateInvoice = (
+    invoice: Invoice,
+    status: "draft" | "pending",
+  ) => {
+    invoices.addInvoice({ ...invoice, status });
+    modal.open("list");
   };
 
-  const handleUpdateInvoice = (id: string, updatedInvoice: Invoice) => {
-    setInvoices(
-      invoices.map((inv) => (inv.id === id ? { ...updatedInvoice, id } : inv)),
-    );
-    setCurrentView("detail");
-    setSelectedInvoice({ ...updatedInvoice, id });
+  const handleUpdateInvoice = (
+    invoice: Invoice,
+    status: "draft" | "pending",
+  ) => {
+    if (selectedInvoice) {
+      invoices.updateInvoice(selectedInvoice.id, { ...invoice, status });
+      // Update selected invoice to show changes
+      const updated = invoices.getInvoiceById(selectedInvoice.id);
+      if (updated) setSelectedInvoice(updated);
+      modal.open("detail");
+    }
   };
 
-  const handleDeleteInvoice = (id: string) => {
-    setInvoices(invoices.filter((inv) => inv.id !== id));
-    setCurrentView("list");
+  const handleDeleteInvoice = () => {
+    if (selectedInvoice) {
+      invoices.deleteInvoice(selectedInvoice.id);
+      modal.open("list");
+    }
   };
 
-  const handleMarkAsPaid = (id: string) => {
-    setInvoices(
-      invoices.map((inv) => (inv.id === id ? { ...inv, status: "paid" } : inv)),
-    );
-    setSelectedInvoice(
-      selectedInvoice ? { ...selectedInvoice, status: "paid" } : null,
-    );
+  const handleMarkAsPaid = () => {
+    if (selectedInvoice) {
+      invoices.markAsPaid(selectedInvoice.id);
+      const updated = invoices.getInvoiceById(selectedInvoice.id);
+      if (updated) setSelectedInvoice(updated);
+    }
   };
 
-  const filteredInvoices = invoices.filter((inv) => {
-    if (filterStatus === "Filter by status") return true;
-    return inv.status === filterStatus;
-  });
+  // ============================================
+  // RENDER
+  // ============================================
 
   return (
     <div className="app">
       <Sidebar />
-      <main className="app-main">
-        {currentView === "list" && (
+
+      <MainLayout>
+        {/* LIST VIEW - Full page */}
+        {modal.modalType === "list" && (
           <InvoicesList
-            invoices={filteredInvoices}
-            filterStatus={filterStatus}
-            onFilterChange={setFilterStatus}
-            onCreateNew={() => setCurrentView("create")}
+            invoices={invoices.filteredInvoices}
+            filterStatus={invoices.filterStatus}
+            onFilterChange={invoices.setFilterStatus}
+            onCreateNew={() => {
+              setSelectedInvoice(null);
+              modal.open("create");
+            }}
             onSelectInvoice={(invoice) => {
               setSelectedInvoice(invoice);
-              setCurrentView("detail");
+              modal.open("detail");
             }}
           />
         )}
 
-        {currentView === "create" && (
-          <InvoiceForm
-            onSubmit={handleCreateInvoice}
-            onCancel={() => setCurrentView("list")}
-          />
-        )}
-
-        {currentView === "detail" && selectedInvoice && (
+        {/* DETAIL VIEW - Full page */}
+        {modal.modalType === "detail" && selectedInvoice && (
           <InvoiceDetail
             invoice={selectedInvoice}
-            onEdit={() => setCurrentView("edit")}
-            onDelete={() => handleDeleteInvoice(selectedInvoice.id)}
-            onMarkAsPaid={() => handleMarkAsPaid(selectedInvoice.id)}
-            onBack={() => setCurrentView("list")}
+            onEdit={() => modal.open("edit")}
+            onDelete={() => modal.open("delete")}
+            onMarkAsPaid={handleMarkAsPaid}
+            onBack={() => modal.open("list")}
           />
         )}
+      </MainLayout>
 
-        {currentView === "edit" && selectedInvoice && (
+      {/* ============================================
+          MODAL OVERLAYS (Slide-in from left)
+          ============================================ */}
+
+      {/* CREATE/EDIT FORM MODAL - Side panel */}
+      <Modal
+        isOpen={modal.modalType === "create" || modal.modalType === "edit"}
+        onClose={() => {
+          if (modal.modalType === "create") {
+            modal.open("list");
+          } else if (modal.modalType === "edit") {
+            modal.open("detail");
+          }
+        }}
+      >
+        {(modal.modalType === "create" || modal.modalType === "edit") && (
           <InvoiceForm
-            initialData={selectedInvoice}
-            onSubmit={(data) => handleUpdateInvoice(selectedInvoice.id, data)}
+            initialData={selectedInvoice || undefined}
+            isEditing={modal.modalType === "edit"}
+            onSubmit={
+              modal.modalType === "edit"
+                ? handleUpdateInvoice
+                : handleCreateInvoice
+            }
             onCancel={() => {
-              setCurrentView("detail");
+              if (modal.modalType === "create") {
+                modal.open("list");
+              } else {
+                modal.open("detail");
+              }
             }}
-            isEditing
           />
         )}
-      </main>
+      </Modal>
+
+      {/* DELETE CONFIRMATION MODAL - Small modal */}
+      <ConfirmDeleteModal
+        isOpen={modal.modalType === "delete"}
+        invoiceId={selectedInvoice?.id}
+        onConfirm={handleDeleteInvoice}
+        onCancel={() => modal.open("detail")}
+      />
     </div>
   );
 }

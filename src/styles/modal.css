@@ -1,0 +1,204 @@
+/* ===================================
+   MODAL & SIDE PANEL STYLES
+   ==================================== */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  animation: fadeIn var(--transition-base);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Side Panel */
+.modal-panel {
+  position: fixed;
+  left: var(--sidebar-width);
+  top: 0;
+  width: 45%;
+  max-width: 600px;
+  height: 100vh;
+  background-color: var(--color-bg-white);
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  animation: slideIn var(--transition-base);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.modal-panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Invoice Form Modal Specific */
+.invoice-form-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.invoice-form-modal h1 {
+  color: var(--color-text-dark);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-md);
+}
+
+.invoice-form-modal .form-section {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+}
+
+.invoice-form-modal .form-section:not(:last-of-type) {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Modal Form Footer - Fixed at bottom */
+.modal-form-footer {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  width: 45%;
+  max-width: 600px;
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg-white);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  z-index: 999;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure modal content doesn't hide behind footer */
+.invoice-form-modal {
+  padding-bottom: 140px;
+}
+
+/* Delete Modal Specific */
+.delete-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.delete-modal-content h2 {
+  color: var(--color-text-dark);
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+.delete-modal-content p {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+}
+
+/* Modal Responsive */
+@media (max-width: 1023px) {
+  .modal-panel {
+    width: 55%;
+  }
+
+  .modal-form-footer {
+    width: 55%;
+  }
+}
+
+@media (max-width: 767px) {
+  .modal-panel {
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .modal-form-footer {
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .modal-panel {
+    padding: var(--spacing-md);
+  }
+
+  .modal-form-footer {
+    padding: var(--spacing-md);
+  }
+
+  .modal-form-footer {
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  .modal-form-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .invoice-form-modal {
+    padding-bottom: 160px;
+  }
+}
+
+/* Scroll bar styling for modal */
+.modal-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-panel::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.modal-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-light);
+}

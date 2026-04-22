@@ -5,7 +5,7 @@ import InvoiceItemsList from "../common/InvoiceItemsList";
 
 interface InvoiceFormProps {
   initialData?: Invoice;
-  onSubmit: (invoice: Invoice) => void;
+  onSubmit: (invoice: Invoice, status: "draft" | "pending") => void;
   onCancel: () => void;
   isEditing?: boolean;
 }
@@ -70,9 +70,7 @@ function InvoiceForm({
     return newErrors.length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = (status: "draft" | "pending") => {
     if (!validateForm()) return;
 
     const invoice: Invoice = {
@@ -87,174 +85,152 @@ function InvoiceForm({
       paymentTerms,
       projectDescription,
       items,
-      status: initialData?.status || "draft",
+      status: isEditing ? initialData?.status || "draft" : status,
     };
 
-    onSubmit(invoice);
+    onSubmit(invoice, status);
   };
 
   return (
-    <div className="invoice-form-container">
-      <div className="invoice-form-header">
-        <button className="btn-back" onClick={onCancel}>
-          ← Go back
-        </button>
-        <h1>{isEditing ? `Edit #${initialData?.id}` : "New Invoice"}</h1>
-      </div>
+    <div className="invoice-form-modal">
+      <h1 className="invoice-form-title">
+        {isEditing ? `Edit #${initialData?.id}` : "New Invoice"}
+      </h1>
 
-      <form className="invoice-form" onSubmit={handleSubmit}>
-        <div className="invoice-form-content">
-          <div className="invoice-form-main">
-            {errors.length > 0 && (
-              <div className="form-errors">
-                {errors.map((error, index) => (
-                  <p key={index} className="error-message">
-                    {error}
-                  </p>
-                ))}
-              </div>
-            )}
+      {errors.length > 0 && (
+        <div className="form-errors">
+          {errors.map((error, index) => (
+            <p key={index} className="error-message">
+              {error}
+            </p>
+          ))}
+        </div>
+      )}
 
-            <section className="form-section">
-              <h2 className="section-title">Bill From</h2>
-              <AddressForm
-                address={billFromAddress}
-                onChange={setBillFromAddress}
-                hasError={errors.some((e) => e.includes("Bill From"))}
-              />
-            </section>
+      <section className="form-section">
+        <h2 className="section-title">Bill From</h2>
+        <AddressForm
+          address={billFromAddress}
+          onChange={setBillFromAddress}
+          hasError={errors.some((e) => e.includes("Bill From"))}
+        />
+      </section>
 
-            <section className="form-section">
-              <h2 className="section-title">Bill To</h2>
-              <div className="form-group">
-                <label htmlFor="client-name">Client's Name</label>
-                <input
-                  id="client-name"
-                  type="text"
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  className={
-                    errors.some((e) => e.includes("Client name"))
-                      ? "input-error"
-                      : ""
-                  }
-                  placeholder="Client's Name"
-                />
-                {errors.some((e) => e.includes("Client name")) && (
-                  <span className="error-label">can't be empty</span>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="client-email">Client's Email</label>
-                <input
-                  id="client-email"
-                  type="email"
-                  value={clientEmail}
-                  onChange={(e) => setClientEmail(e.target.value)}
-                  className={
-                    errors.some((e) => e.includes("Client email"))
-                      ? "input-error"
-                      : ""
-                  }
-                  placeholder="e.g. email@example.com"
-                />
-              </div>
-
-              <AddressForm
-                address={billToAddress}
-                onChange={setBillToAddress}
-                hasError={errors.some((e) => e.includes("Bill To"))}
-              />
-            </section>
-
-            <section className="form-section form-row-two-cols">
-              <div className="form-group">
-                <label htmlFor="invoice-date">Invoice Date</label>
-                <input
-                  id="invoice-date"
-                  type="date"
-                  value={invoiceDate}
-                  onChange={(e) => setInvoiceDate(e.target.value)}
-                  className={
-                    errors.some((e) => e.includes("Invoice date"))
-                      ? "input-error"
-                      : ""
-                  }
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="payment-terms">Payment Terms</label>
-                <select
-                  id="payment-terms"
-                  value={paymentTerms}
-                  onChange={(e) => setPaymentTerms(e.target.value as any)}
-                >
-                  <option value="net1">Net 1 Day</option>
-                  <option value="net7">Net 7 Days</option>
-                  <option value="net14">Net 14 Days</option>
-                  <option value="net30">Net 30 Days</option>
-                </select>
-              </div>
-            </section>
-
-            <section className="form-section">
-              <div className="form-group">
-                <label htmlFor="project-description">Project Description</label>
-                <input
-                  id="project-description"
-                  type="text"
-                  value={projectDescription}
-                  onChange={(e) => setProjectDescription(e.target.value)}
-                  placeholder="e.g. Graphic Design Service"
-                />
-              </div>
-            </section>
-
-            <section className="form-section">
-              <h2 className="section-title">Item List</h2>
-              <InvoiceItemsList items={items} setItems={setItems} />
-              {errors.some((e) => e.includes("At least one item")) && (
-                <p className="error-message">* All fields must be added</p>
-              )}
-            </section>
-          </div>
-
-          <div className="invoice-form-sidebar">
-            <div className="form-preview">
-              <h3>Preview</h3>
-              <div className="preview-content">
-                <div className="preview-item">
-                  <span>Total</span>
-                  <span className="preview-value">
-                    £
-                    {items
-                      .reduce(
-                        (sum, item) => sum + item.quantity * item.price,
-                        0,
-                      )
-                      .toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section className="form-section">
+        <h2 className="section-title">Bill To</h2>
+        <div className="form-group">
+          <label htmlFor="client-name">Client's Name</label>
+          <input
+            id="client-name"
+            type="text"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            className={
+              errors.some((e) => e.includes("Client name")) ? "input-error" : ""
+            }
+            placeholder="Client's Name"
+          />
+          {errors.some((e) => e.includes("Client name")) && (
+            <span className="error-label">can't be empty</span>
+          )}
         </div>
 
-        <div className="invoice-form-footer">
+        <div className="form-group">
+          <label htmlFor="client-email">Client's Email</label>
+          <input
+            id="client-email"
+            type="email"
+            value={clientEmail}
+            onChange={(e) => setClientEmail(e.target.value)}
+            className={
+              errors.some((e) => e.includes("Client email"))
+                ? "input-error"
+                : ""
+            }
+            placeholder="e.g. email@example.com"
+          />
+        </div>
+
+        <AddressForm
+          address={billToAddress}
+          onChange={setBillToAddress}
+          hasError={errors.some((e) => e.includes("Bill To"))}
+        />
+      </section>
+
+      <section className="form-section form-row-two-cols">
+        <div className="form-group">
+          <label htmlFor="invoice-date">Invoice Date</label>
+          <input
+            id="invoice-date"
+            type="date"
+            value={invoiceDate}
+            onChange={(e) => setInvoiceDate(e.target.value)}
+            className={
+              errors.some((e) => e.includes("Invoice date"))
+                ? "input-error"
+                : ""
+            }
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="payment-terms">Payment Terms</label>
+          <select
+            id="payment-terms"
+            value={paymentTerms}
+            onChange={(e) => setPaymentTerms(e.target.value as any)}
+          >
+            <option value="net1">Net 1 Day</option>
+            <option value="net7">Net 7 Days</option>
+            <option value="net14">Net 14 Days</option>
+            <option value="net30">Net 30 Days</option>
+          </select>
+        </div>
+      </section>
+
+      <section className="form-section">
+        <div className="form-group">
+          <label htmlFor="project-description">Project Description</label>
+          <input
+            id="project-description"
+            type="text"
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+            placeholder="e.g. Graphic Design Service"
+          />
+        </div>
+      </section>
+
+      <section className="form-section">
+        <h2 className="section-title">Item List</h2>
+        <InvoiceItemsList items={items} setItems={setItems} />
+        {errors.some((e) => e.includes("At least one item")) && (
+          <p className="error-message">* All fields must be added</p>
+        )}
+      </section>
+
+      <div className="modal-form-footer">
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          {isEditing ? "Cancel" : "Discard"}
+        </button>
+        {!isEditing && (
           <button
             type="button"
-            className="btn btn-secondary"
-            onClick={onCancel}
+            className="btn btn-draft"
+            onClick={() => handleSubmit("draft")}
           >
-            Discard
+            Save as Draft
           </button>
-          <button type="submit" className="btn btn-primary">
-            {isEditing ? "Save Changes" : "Save & Send"}
-          </button>
-        </div>
-      </form>
+        )}
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => handleSubmit(isEditing ? "draft" : "pending")}
+        >
+          {isEditing ? "Save Changes" : "Save & Send"}
+        </button>
+      </div>
     </div>
   );
 }
