@@ -97,16 +97,6 @@ function InvoiceForm({
         {isEditing ? `Edit #${initialData?.id}` : "New Invoice"}
       </h1>
 
-      {errors.length > 0 && (
-        <div className="form-errors">
-          {errors.map((error, index) => (
-            <p key={index} className="error-message">
-              {error}
-            </p>
-          ))}
-        </div>
-      )}
-
       <section className="form-section">
         <h2 className="section-title">Bill From</h2>
         <AddressForm
@@ -119,7 +109,12 @@ function InvoiceForm({
       <section className="form-section">
         <h2 className="section-title">Bill To</h2>
         <div className="form-group">
-          <label htmlFor="client-name">Client's Name</label>
+          <div className="form-group-header">
+            <label htmlFor="client-name">Client's Name</label>
+            {errors.some((e) => e.includes("Client name")) && (
+              <span className="error-label">can't be empty</span>
+            )}
+          </div>
           <input
             id="client-name"
             type="text"
@@ -130,13 +125,16 @@ function InvoiceForm({
             }
             placeholder="Client's Name"
           />
-          {errors.some((e) => e.includes("Client name")) && (
-            <span className="error-label">can't be empty</span>
-          )}
         </div>
 
         <div className="form-group">
-          <label htmlFor="client-email">Client's Email</label>
+          <div className="form-group-header">
+            <label htmlFor="client-email">Client's Email</label>
+            {errors.some((e) => e.includes("Client email")) && (
+              <span className="error-label">can't be empty</span>
+            )}
+          </div>
+
           <input
             id="client-email"
             type="email"
@@ -160,7 +158,13 @@ function InvoiceForm({
 
       <section className="form-section form-row-two-cols">
         <div className="form-group">
-          <label htmlFor="invoice-date">Invoice Date</label>
+          <div className="form-group-header">
+            <label htmlFor="invoice-date">Invoice Date</label>
+            {errors.some((e) => e.includes("Invoice date")) && (
+              <span className="error-label">can't be empty</span>
+            )}
+          </div>
+
           <input
             id="invoice-date"
             type="date"
@@ -204,9 +208,21 @@ function InvoiceForm({
 
       <section className="form-section">
         <h2 className="section-title">Item List</h2>
+
         <InvoiceItemsList items={items} setItems={setItems} />
+
+        {/* Show these errors ONLY below items */}
+        {errors.some((e) => e.includes("Bill From street")) ||
+        errors.some((e) => e.includes("Bill From city")) ||
+        errors.some((e) => e.includes("Client name")) ||
+        errors.some((e) => e.includes("Client email")) ||
+        errors.some((e) => e.includes("Bill To street")) ||
+        errors.some((e) => e.includes("Bill To city")) ||
+        errors.some((e) => e.includes("Invoice date")) ? (
+          <p className="error-message">-All fields must be added</p>
+        ) : null}
         {errors.some((e) => e.includes("At least one item")) && (
-          <p className="error-message">* All fields must be added</p>
+          <p className="error-message">-An item must be added</p>
         )}
       </section>
 

@@ -9,7 +9,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.185);
   z-index: 998;
   animation: fadeIn var(--transition-base);
 }
@@ -201,4 +201,19 @@
 
 .modal-panel::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-light);
+}
+
+.modal-content {
+  background-color: var(--color-bg-white);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  transition: background-color var(--transition-base);
+  z-index: 1000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

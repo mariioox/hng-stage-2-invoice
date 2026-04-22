@@ -4,6 +4,12 @@ interface AddressFormProps {
   address: Address;
   onChange: (address: Address) => void;
   hasError?: boolean;
+  fieldErrors?: {
+    street?: boolean;
+    city?: boolean;
+    postCode?: boolean;
+    country?: boolean;
+  };
 }
 
 function AddressForm({ address, onChange, hasError }: AddressFormProps) {

@@ -14,14 +14,10 @@ import "./index.css";
 import "./styles/modal.css";
 
 function AppContent() {
-  // State management
+  // State management with hooks
   const invoices = useInvoices();
   const modal = useModal("list");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-
-  // ============================================
-  // FORM SUBMISSION HANDLERS
-  // ============================================
 
   const handleCreateInvoice = (
     invoice: Invoice,
@@ -36,9 +32,14 @@ function AppContent() {
     status: "draft" | "pending",
   ) => {
     if (selectedInvoice) {
-      invoices.updateInvoice(selectedInvoice.id, { ...invoice, status });
-      // Update selected invoice to show changes
-      const updated = invoices.getInvoiceById(selectedInvoice.id);
+      // Only change draft to pending on first edit, not on subsequent edits
+      const newStatus =
+        selectedInvoice.status === "draft" ? "pending" : selectedInvoice.status;
+
+      const updated = invoices.updateInvoice(selectedInvoice.id, {
+        ...invoice,
+        status: newStatus,
+      });
       if (updated) setSelectedInvoice(updated);
       modal.open("detail");
     }
@@ -59,17 +60,15 @@ function AppContent() {
     }
   };
 
-  // ============================================
-  // RENDER
-  // ============================================
-
   return (
-    <div className="app">
+    <div
+      className={`app ${modal.modalType === "create" || modal.modalType === "edit" || modal.modalType === "delete" ? "modal-open" : ""}`}
+    >
       <Sidebar />
 
       <MainLayout>
         {/* LIST VIEW - Full page */}
-        {modal.modalType === "list" && (
+        {(modal.modalType === "list" || modal.modalType === "create") && (
           <InvoicesList
             invoices={invoices.filteredInvoices}
             filterStatus={invoices.filterStatus}
@@ -86,59 +85,55 @@ function AppContent() {
         )}
 
         {/* DETAIL VIEW - Full page */}
-        {modal.modalType === "detail" && selectedInvoice && (
-          <InvoiceDetail
-            invoice={selectedInvoice}
-            onEdit={() => modal.open("edit")}
-            onDelete={() => modal.open("delete")}
-            onMarkAsPaid={handleMarkAsPaid}
-            onBack={() => modal.open("list")}
-          />
-        )}
-      </MainLayout>
+        {(modal.modalType === "detail" || modal.modalType === "edit") &&
+          selectedInvoice && (
+            <InvoiceDetail
+              invoice={selectedInvoice}
+              onEdit={() => modal.open("edit")}
+              onDelete={() => modal.open("delete")}
+              onMarkAsPaid={handleMarkAsPaid}
+              onBack={() => modal.open("list")}
+            />
+          )}
 
-      {/* ============================================
-          MODAL OVERLAYS (Slide-in from left)
-          ============================================ */}
-
-      {/* CREATE/EDIT FORM MODAL - Side panel */}
-      <Modal
-        isOpen={modal.modalType === "create" || modal.modalType === "edit"}
-        onClose={() => {
-          if (modal.modalType === "create") {
-            modal.open("list");
-          } else if (modal.modalType === "edit") {
-            modal.open("detail");
-          }
-        }}
-      >
-        {(modal.modalType === "create" || modal.modalType === "edit") && (
-          <InvoiceForm
-            initialData={selectedInvoice || undefined}
-            isEditing={modal.modalType === "edit"}
-            onSubmit={
-              modal.modalType === "edit"
-                ? handleUpdateInvoice
-                : handleCreateInvoice
+        <Modal
+          isOpen={modal.modalType === "create" || modal.modalType === "edit"}
+          onClose={() => {
+            if (modal.modalType === "create") {
+              modal.open("list");
+            } else if (modal.modalType === "edit") {
+              modal.open("detail");
             }
-            onCancel={() => {
-              if (modal.modalType === "create") {
-                modal.open("list");
-              } else {
-                modal.open("detail");
+          }}
+        >
+          {(modal.modalType === "create" || modal.modalType === "edit") && (
+            <InvoiceForm
+              initialData={selectedInvoice || undefined}
+              isEditing={modal.modalType === "edit"}
+              onSubmit={
+                modal.modalType === "edit"
+                  ? handleUpdateInvoice
+                  : handleCreateInvoice
               }
-            }}
-          />
-        )}
-      </Modal>
+              onCancel={() => {
+                if (modal.modalType === "create") {
+                  modal.open("list");
+                } else {
+                  modal.open("detail");
+                }
+              }}
+            />
+          )}
+        </Modal>
 
-      {/* DELETE CONFIRMATION MODAL - Small modal */}
-      <ConfirmDeleteModal
-        isOpen={modal.modalType === "delete"}
-        invoiceId={selectedInvoice?.id}
-        onConfirm={handleDeleteInvoice}
-        onCancel={() => modal.open("detail")}
-      />
+        {/* DELETE CONFIRMATION MODAL */}
+        <ConfirmDeleteModal
+          isOpen={modal.modalType === "delete"}
+          invoiceId={selectedInvoice?.id}
+          onConfirm={handleDeleteInvoice}
+          onCancel={() => modal.open("detail")}
+        />
+      </MainLayout>
     </div>
   );
 }

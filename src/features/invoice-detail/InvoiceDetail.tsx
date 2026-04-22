@@ -1,7 +1,5 @@
-import { useState } from "react";
 import type { Invoice } from "../../types/invoice";
 import StatusBadge from "../common/StatusBadge";
-import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
 
 interface InvoiceDetailProps {
   invoice: Invoice;
@@ -18,8 +16,6 @@ function InvoiceDetail({
   onMarkAsPaid,
   onBack,
 }: InvoiceDetailProps) {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
   const dueDate = new Date(invoice.invoiceDate);
   const paymentTermsDays = {
     net1: 1,
@@ -33,11 +29,6 @@ function InvoiceDetail({
     (sum, item) => sum + item.quantity * item.price,
     0,
   );
-
-  const handleDeleteClick = () => {
-    onDelete();
-    setShowDeleteConfirm(false);
-  };
 
   return (
     <div className="invoice-detail-container">
@@ -57,10 +48,7 @@ function InvoiceDetail({
           <button className="btn btn-secondary" onClick={onEdit}>
             Edit
           </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => setShowDeleteConfirm(true)}
-          >
+          <button className="btn btn-danger" onClick={onDelete}>
             Delete
           </button>
           {invoice.status !== "paid" && (
@@ -150,14 +138,6 @@ function InvoiceDetail({
           </div>
         </div>
       </div>
-
-      {showDeleteConfirm && (
-        <ConfirmDeleteModal
-          invoiceId={invoice.id}
-          onConfirm={handleDeleteClick}
-          onCancel={() => setShowDeleteConfirm(false)}
-        />
-      )}
     </div>
   );
 }

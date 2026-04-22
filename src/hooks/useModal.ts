@@ -22,6 +22,6 @@ export function useModal(initialType: ModalType = 'list') {
     open,
     close,
     isOpen,
-    isFormOpen: modalType === 'create' || modalType === 'edit',
+    isFormOpen: modalType === 'create' || modalType === 'edit' || modalType === 'delete',
   };
 }
