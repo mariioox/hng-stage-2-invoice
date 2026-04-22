@@ -64,7 +64,7 @@ function AppContent() {
   // ============================================
 
   return (
-    <div className="app">
+    <div className={`app ${modal.isFormOpen ? "modal-open" : ""}`}>
       <Sidebar />
 
       <MainLayout>
