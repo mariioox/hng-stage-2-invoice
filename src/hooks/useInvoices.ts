@@ -24,9 +24,17 @@ export function useInvoices(initialInvoices: Invoice[] = []) {
 
   // Update existing invoice
   const updateInvoice = useCallback((id: string, updatedInvoice: Invoice) => {
-    setInvoices(prev =>
-      prev.map(inv => inv.id === id ? { ...updatedInvoice, id } : inv)
-    );
+  let updated: Invoice | null = null;
+  setInvoices(prev => {
+    const newInvoices = prev.map(inv => {
+      if (inv.id === id) {updated = { ...updatedInvoice, id };
+        return updated;
+      }
+      return inv;
+    });
+    return newInvoices;
+  });
+  return updated;
   }, []);
 
   // Delete invoice

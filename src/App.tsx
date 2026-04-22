@@ -36,9 +36,12 @@ function AppContent() {
     status: "draft" | "pending",
   ) => {
     if (selectedInvoice) {
-      invoices.updateInvoice(selectedInvoice.id, { ...invoice, status });
-      // Update selected invoice to show changes
-      const updated = invoices.getInvoiceById(selectedInvoice.id);
+      const newStatus = selectedInvoice.status === "draft" ? "pending" : status;
+      const updated = invoices.updateInvoice(selectedInvoice.id, {
+        ...invoice,
+        status: newStatus,
+      });
+
       if (updated) setSelectedInvoice(updated);
       modal.open("detail");
     }
