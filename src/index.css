@@ -1,12 +1,4 @@
-/* ===================================
-   INVOICE APP REFINED STYLESHEET
-   Pixel-perfect design implementation
-   ==================================== */
-
-/* ===================================
-   1. DESIGN TOKENS & VARIABLES (EXACT)
-   ==================================== */
-
+/*  DESIGN TOKENS & VARIABLES  */
 :root {
   /* Colors - Primary */
   --color-primary-purple: #7c5cfa;
@@ -104,10 +96,7 @@
   --color-sidebar: #2c2e46;
 }
 
-/* ===================================
-   2. RESET & BASE STYLES
-   ==================================== */
-
+/*  RESET & BASE STYLES  */
 * {
   margin: 0;
   padding: 0;
@@ -134,10 +123,7 @@ body {
   min-height: 100vh;
 }
 
-/* ===================================
-   3. APP LAYOUT & MODAL OVERLAY
-   ==================================== */
-
+/*  APP LAYOUT & MODAL OVERLAY  */
 .app {
   display: flex;
   min-height: 100vh;
@@ -152,20 +138,7 @@ body {
   transition: margin-left var(--transition-fast);
 }
 
-/* Modal Overlay - Shows when form/modal is open */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-/* ===================================
-   4. SIDEBAR
-   ==================================== */
-
+/*   SIDEBAR   */
 .sidebar {
   position: fixed;
   left: 0;
@@ -260,9 +233,7 @@ body {
   object-fit: cover;
 }
 
-/* ===================================
-   5. TYPOGRAPHY
-   ==================================== */
+/*  TYPOGRAPHY  */
 
 h1 {
   font-size: var(--font-size-2xl);
@@ -299,10 +270,7 @@ label {
   letter-spacing: 0.4px;
 }
 
-/* ===================================
-   6. BUTTONS - EXACT DESIGN
-   ==================================== */
-
+/*  BUTTONS  */
 button {
   font-family: inherit;
   font-weight: var(--font-weight-bold);
@@ -435,10 +403,7 @@ button {
   opacity: 1;
 }
 
-/* ===================================
-   7. FORM ELEMENTS
-   ==================================== */
-
+/*  FORM ELEMENTS  */
 input,
 select,
 textarea {
@@ -515,10 +480,7 @@ input::placeholder {
   margin-bottom: var(--spacing-md);
 }
 
-/* ===================================
-   8. STATUS BADGE
-   ==================================== */
-
+/*   STATUS BADGE   */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -564,10 +526,7 @@ input::placeholder {
   background-color: var(--color-status-paid);
 }
 
-/* ===================================
-   9. INVOICES LIST VIEW
-   ==================================== */
-
+/*   INVOICES LIST VIEW   */
 .invoices-list-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -688,10 +647,7 @@ input::placeholder {
   font-size: var(--font-size-lg);
 }
 
-/* ===================================
-   10. EMPTY STATE
-   ==================================== */
-
+/*   EMPTY STATE   */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -718,10 +674,7 @@ input::placeholder {
   font-size: var(--font-size-sm);
 }
 
-/* ===================================
-   11. INVOICE FORM VIEW
-   ==================================== */
-
+/*   INVOICE FORM VIEW   */
 .invoice-form-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -837,10 +790,7 @@ input::placeholder {
   border-top: 1px solid var(--color-border);
 }
 
-/* ===================================
-   12. INVOICE DETAIL VIEW
-   ==================================== */
-
+/*   INVOICE DETAIL VIEW   */
 .invoice-detail-container {
   max-width: 900px;
   margin: 0 auto;
@@ -1018,38 +968,7 @@ input::placeholder {
   letter-spacing: -0.5px;
 }
 
-/* ===================================
-   13. MODAL
-   ==================================== */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 998;
-  animation: fadeIn var(--transition-base);
-}
-
-.modal-content h2 {
-  margin-bottom: var(--spacing-md);
-  font-size: var(--font-size-lg);
-}
-
-.modal-content p {
-  margin-bottom: var(--spacing-lg);
-  line-height: var(--line-height-relaxed);
-  font-size: var(--font-size-sm);
-}
-
-/* ===================================
-   14. RESPONSIVE DESIGN
-   ==================================== */
+/*   RESPONSIVE DESIGN   */
 
 /* Tablet (768px - 1023px) */
 @media (max-width: 1023px) {
@@ -1252,16 +1171,9 @@ input::placeholder {
     justify-content: space-between;
     align-items: center;
   }
-
-  .modal-content {
-    width: 90%;
-    padding: var(--spacing-lg);
-  }
 }
 
-/* ===================================
-   15. UTILITIES
-   ==================================== */
+/*   UTILITIES   */
 
 .hidden {
   display: none !important;
