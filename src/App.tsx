@@ -27,10 +27,7 @@ function AppContent() {
     modal.open("list");
   };
 
-  const handleUpdateInvoice = (
-    invoice: Invoice,
-    status: "draft" | "pending",
-  ) => {
+  const handleUpdateInvoice = (invoice: Invoice) => {
     if (selectedInvoice) {
       // Only change draft to pending on first edit, not on subsequent edits
       const newStatus =
