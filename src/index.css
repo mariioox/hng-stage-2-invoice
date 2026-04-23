@@ -356,7 +356,7 @@ button {
 }
 
 .btn-icon {
-  background-color: white !important; /* The white circle */
+  background-color: white !important;
   width: 32px !important;
   height: 32px !important;
   border-radius: 50% !important;
@@ -583,9 +583,9 @@ input::placeholder {
 }
 
 .filter-trigger {
-  background: transparent !important; /* Override global form bg */
-  border: none !important; /* Override global form border */
-  padding: 0 !important; /* Override global padding */
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
   box-shadow: none !important;
   display: flex;
   align-items: center;
@@ -627,7 +627,7 @@ input::placeholder {
 }
 
 .filter-option input {
-  display: none; /* Hide real checkbox */
+  display: none;
 }
 
 .checkbox-custom {
