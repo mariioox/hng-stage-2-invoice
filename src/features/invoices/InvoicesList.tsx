@@ -80,7 +80,7 @@ function InvoicesList({
 
       <div className="invoices-list-content">
         {invoices.length === 0 ? (
-          <EmptyState onCreateNew={onCreateNew} />
+          <EmptyState />
         ) : (
           <div className="invoices-table">
             {invoices.map((invoice) => (

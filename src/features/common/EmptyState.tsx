@@ -1,10 +1,6 @@
 import Email from "../../assets/Email campaign_Flatline 2.png";
 
-interface EmptyStateProps {
-  onCreateNew: () => void;
-}
-
-function EmptyState({ onCreateNew }: EmptyStateProps) {
+function EmptyState() {
   return (
     <div className="empty-state">
       <div className="empty-state-icon">
