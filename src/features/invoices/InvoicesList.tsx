@@ -2,6 +2,7 @@ import type { Invoice } from "../../types/invoice";
 import { useState } from "react";
 import EmptyState from "../common/EmptyState";
 import InvoiceRow from "./InvoiceRow";
+import arrowDown from "./arrow_down.png";
 
 interface InvoicesListProps {
   invoices: Invoice[];
@@ -42,8 +43,10 @@ function InvoicesList({
             >
               Filter<span>by status</span>
               <img
-                src="/arrow-down.svg"
+                src={`${arrowDown}`}
                 alt=""
+                width="25"
+                height="25"
                 className={isOpen ? "rotate" : ""}
               />
             </button>
