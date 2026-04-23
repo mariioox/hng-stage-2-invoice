@@ -1,5 +1,5 @@
 import { useTheme } from "../../context/ThemeContext";
-import Logo from "./Logo";
+import logo from "../../assets/logo.svg";
 
 function Sidebar() {
   const { theme, toggleTheme } = useTheme();
@@ -7,7 +7,9 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-top">
-        <Logo />
+        <div className="logo-container">
+          <img src={logo} alt="Logo" className="logo" />
+        </div>
       </div>
 
       <div className="sidebar-middle">{/* Spacer for middle section */}</div>
@@ -57,6 +59,8 @@ function Sidebar() {
             </svg>
           )}
         </button>
+
+        <div className="sidebar-divider" />
 
         <div className="user-avatar">
           <img
