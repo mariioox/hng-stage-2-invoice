@@ -1,5 +1,5 @@
-import { useTheme } from '../../context/ThemeContext';
-import Logo from './Logo';
+import { useTheme } from "../../context/ThemeContext";
+import Logo from "./Logo";
 
 function Sidebar() {
   const { theme, toggleTheme } = useTheme();
@@ -10,13 +10,15 @@ function Sidebar() {
         <Logo />
       </div>
 
-      <div className="sidebar-middle">
-        {/* Spacer for middle section */}
-      </div>
+      <div className="sidebar-middle">{/* Spacer for middle section */}</div>
 
       <div className="sidebar-bottom">
-        <button className="btn-theme-toggle" onClick={toggleTheme} title="Toggle theme">
-          {theme === 'light' ? (
+        <button
+          className="btn-theme-toggle"
+          onClick={toggleTheme}
+          title="Toggle theme"
+        >
+          {theme === "light" ? (
             // Moon icon for dark mode
             <svg
               width="20"

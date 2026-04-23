@@ -659,7 +659,6 @@ input::placeholder {
 
 .empty-state-icon {
   margin-bottom: var(--spacing-lg);
-  opacity: 0.3;
 }
 
 .empty-state-title {
@@ -977,6 +976,45 @@ input::placeholder {
     --spacing-2xl: 2rem;
   }
 
+  /* SIDEBAR - Transform to horizontal top navigation */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 70px;
+    flex-direction: row;
+    padding: 0 var(--spacing-lg);
+    gap: var(--spacing-md);
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+  }
+
+  .sidebar-middle {
+    flex: 1;
+  }
+
+  .sidebar-bottom {
+    flex-direction: row;
+    gap: var(--spacing-md);
+    width: auto;
+  }
+
+  /* Adjust main content for sidebar at top */
+  .app-main {
+    margin-left: 0;
+    margin-top: 70px;
+    width: 100%;
+  }
+
   .invoices-list-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1061,12 +1099,15 @@ input::placeholder {
     padding: 0;
   }
 
+  /* Keep sidebar visible, but adjust for mobile */
   .sidebar {
-    display: none;
+    /* Sidebar already transformed to top in 1023px breakpoint */
+    padding: 0 var(--spacing-md);
   }
 
   .app-main {
     margin-left: 0;
+    margin-top: 70px;
     width: 100%;
   }
 
