@@ -29,7 +29,7 @@ function AppContent() {
 
   const handleUpdateInvoice = (invoice: Invoice) => {
     if (selectedInvoice) {
-      // Only change draft to pending on first edit, not on subsequent edits
+      // Only change draft to pending on first edit, not on subsequent edits.
       const newStatus =
         selectedInvoice.status === "draft" ? "pending" : selectedInvoice.status;
 
