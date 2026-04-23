@@ -1,4 +1,5 @@
 import type { Invoice } from "../../types/invoice";
+import { useState } from "react";
 import EmptyState from "../common/EmptyState";
 import InvoiceRow from "./InvoiceRow";
 
@@ -19,6 +20,8 @@ function InvoicesList({
   onCreateNew,
   onSelectInvoice,
 }: InvoicesListProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="invoices-list-container">
       <div className="invoices-list-header">
@@ -27,24 +30,39 @@ function InvoicesList({
           <p className="invoices-count">
             {invoices.length === 0
               ? "No invoices"
-              : `There are ${invoices.length} ${filterStatus === "Filter by status" ? "total" : filterStatus} invoices`}
+              : `${invoices.length} ${filterStatus === "Filter by status" ? "total" : filterStatus} invoices`}
           </p>
         </div>
 
         <div className="invoices-list-controls">
           <div className="filter-dropdown-wrapper">
-            <label htmlFor="status-filter">Filter by status</label>
-            <select
-              id="status-filter"
-              className="filter-dropdown"
-              value={filterStatus}
-              onChange={(e) => onFilterChange(e.target.value as any)}
+            <button
+              className="filter-trigger"
+              onClick={() => setIsOpen(!isOpen)}
             >
-              <option value="Filter by status">Filter by status</option>
-              <option value="draft">Draft</option>
-              <option value="pending">Pending</option>
-              <option value="paid">Paid</option>
-            </select>
+              Filter<span>by status</span>
+              <img
+                src="/arrow-down.svg"
+                alt=""
+                className={isOpen ? "rotate" : ""}
+              />
+            </button>
+
+            {isOpen && (
+              <div className="filter-menu">
+                {(["draft", "pending", "paid"] as const).map((status) => (
+                  <label key={status} className="filter-option">
+                    <input
+                      type="checkbox"
+                      checked={filterStatus === status}
+                      onChange={() => onFilterChange(status)}
+                    />
+                    <span className="checkbox-custom"></span>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <button

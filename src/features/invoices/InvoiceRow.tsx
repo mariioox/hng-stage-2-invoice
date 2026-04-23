@@ -1,5 +1,5 @@
-import { Invoice } from '../../types/invoice';
-import StatusBadge from '../common/StatusBadge';
+import type { Invoice } from "../../types/invoice";
+import StatusBadge from "../common/StatusBadge";
 
 interface InvoiceRowProps {
   invoice: Invoice;
@@ -16,7 +16,10 @@ function InvoiceRow({ invoice, onClick }: InvoiceRowProps) {
   };
   dueDate.setDate(dueDate.getDate() + paymentTermsDays[invoice.paymentTerms]);
 
-  const total = invoice.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const total = invoice.items.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0,
+  );
 
   return (
     <div className="invoice-row" onClick={onClick}>
@@ -25,7 +28,9 @@ function InvoiceRow({ invoice, onClick }: InvoiceRowProps) {
       </div>
       <div className="invoice-row-due">
         <span className="invoice-due-label">Due</span>
-        <span className="invoice-due-date">{dueDate.toLocaleDateString('en-GB')}</span>
+        <span className="invoice-due-date">
+          {dueDate.toLocaleDateString("en-GB")}
+        </span>
       </div>
       <div className="invoice-row-client">
         <span className="invoice-client-name">{invoice.billTo.name}</span>
